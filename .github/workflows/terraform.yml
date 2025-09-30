@@ -1,0 +1,48 @@
+# nome da pipeline, vai aparecer na aba "Actions" do GitHub
+name: 'Pipeline para deployment do EKS'
+
+# Rodar sempre que houver um 'push' na branch 'main'
+on:
+  push:
+    branches:
+      - main
+
+# Define as tarefas a serem executadas
+jobs:
+  terraform:
+    name: 'Executar Terraform'
+    # Usa uma máquina virtual do Ubuntu para rodar os comandos
+    runs-on: ubuntu-22.04
+
+    steps:
+      # primeiro Baixa o código do repositório para a máquina virtual
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # Segundo Configura as credenciais da AWS usando os Secrets
+      - name: Configurar Credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-1
+          output-env-credentials: true
+          
+      # Terceiro instala o Terraform na máquina virtual
+      - name: Instalar Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Quarto roda 'terraform init'
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+      # Quinto roda 'terraform plan' para visualizar as mudanças
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./terraform
+
+      # Sexto roda 'terraform apply' para aplicar as mudanças na AWS
+      # O '-auto-approve' é essencial para que a pipeline não fique parada esperando um 'yes'
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./terraform
