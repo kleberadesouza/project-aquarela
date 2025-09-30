@@ -1,7 +1,3 @@
-# Ignora o local de plugins do Terraform
-.terraform
-.terraform/
-
 # Ignora arquivos de estado locais e backups
 *.tfstate
 *.tfstate.*
