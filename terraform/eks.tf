@@ -3,7 +3,7 @@ module "eks" {
   version = "20.8.4"
 
   cluster_name    = var.cluster_name
-  cluster_version = var.k8s_version
+  cluster_version = var.k8s_version 
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
@@ -23,11 +23,17 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
+    
     main = {
       instance_types = ["t3.large"]
       min_size       = 1
       max_size       = 3
       desired_size   = 2
+
+      
+      iam_role_additional_policies = {
+        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+      }
     }
   }
 }
