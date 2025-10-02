@@ -31,53 +31,18 @@ Este repositório contém a solução para um desafio técnico DevOps, cujo obje
 
 ## Stack de Tecnologias
 
-<table>
-  <tr>
-    <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" width="48" height="48" alt="AWS" />
-      <br>AWS
-    </td>
-    <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Terraform_Logo.svg" width="48" height="48" alt="Terraform" />
-      <br>Terraform
-    </td>
-    <td align="center" width="96">
-      <img src="https://raw.githubusercontent.com/actions/checkout/main/images/badge.svg" width="48" height="48" alt="GitHub Actions" />
-      <br>GitHub Actions
-    </td>
-    <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Kubernetes_logo_without_workmark.svg" width="48" height="48" alt="Kubernetes" />
-      <br>Kubernetes
-    </td>
-     <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Helm_logo.svg" width="48" height="48" alt="Helm" />
-      <br>Helm
-    </td>
-  </tr>
-   <tr>
-    <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Prometheus_software_logo.svg" width="48" height="48" alt="Prometheus" />
-      <br>Prometheus
-    </td>
-    <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Grafana_logo.svg" width="48" height="48" alt="Grafana" />
-      <br>Grafana
-    </td>
-    <td align="center" width="96">
-      <img src="https://raw.githubusercontent.com/argoproj/argo-cd/master/docs/assets/argo.png" width="48" height="48" alt="Argo CD" />
-      <br>Argo CD
-    </td>
-    <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_logo_without_brand.svg" width="48" height="48" alt="Docker" />
-      <br>Docker
-    </td>
-     <td align="center" width="96">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/SendGrid-logo-color.svg" width="48" height="48" alt="SendGrid" />
-      <br>SendGrid
-    </td>
-  </tr>
-</table>
-
+<p align="center">
+  <img alt="AWS" src="https://img.shields.io/badge/AWS-FF9900?logo=amazonaws&logoColor=white">
+  <img alt="Status" src="https://github.com/kleberadesouza/project-aquarela/actions/workflows/terraform.yaml/badge.svg">
+  <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-1.30-blue?logo=kubernetes&logoColor=white">
+  <img alt="Terraform" src="https://img.shields.io/badge/Terraform-1.5.6-blueviolet?logo=terraform&logoColor=white">
+  <img alt="Git" src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white">
+  <br>
+  <img alt="Prometheus" src="https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white">
+  <img alt="Grafana" src="https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white">
+  <img alt="Argo CD" src="https://img.shields.io/badge/Argo%20CD-EF74AD?logo=argo&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white">
+</p>
 ## Como Executar
 
 Aqui estão as etapas para reproduzir este ambiente.
@@ -121,7 +86,6 @@ kubectl get nodes
 Com o cluster no ar, implementei a stack Kube-Prometheus-Stack usando Helm para ter
 observabilidade.
 
-
 # 1. Criar o namespace para monitoramento
 kubectl create namespace monitoramento
 
@@ -131,12 +95,21 @@ kubectl create secret generic alertmanager-smtp-password \
 -n monitoramento
 
 # 3. Adicionar o repositório do Helm e instalar a stack
-helm repo add prometheus-community https://prometheus-community.github.io/h
-helm repo update
+# 1. Criar o namespace para monitoramento
+kubectl create namespace monitoramento
 
+# 2. Criar o segredo com a chave da API do SendGrid para os alertas
+kubectl create secret generic alertmanager-smtp-password \
+  --from-literal=password='SUA_CHAVE_API_DO_SENDGRID' \
+  -n monitoramento
+
+# 3. Adicionar o repositório do Helm e instalar a stack
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm repo update
 helm install prometheus-stack prometheus-community/kube-prometheus-stack \
---namespace monitoramento \
--f monitoramento/values.yaml
+  --namespace monitoramento \
+  -f monitoramento/values.yaml
 
 # 3.2. Teste de Alertas
 Para validar a integração do Alertmanager com o SendGrid, apliquei uma regra de alerta
@@ -163,18 +136,22 @@ kubectl get secret -n monitoramento prometheus-stack-grafana -o jsonpath="{
 
 A etapa final foi automatizar o deploy da aplicação Sock Shop, substituindo o processo
 manual por um fluxo de GitOps gerenciado pelo Argo CD.
+
 # 4.1. Preparação do Repositório Git
 Dividi os manifestos da aplicação Sock Shop em duas partes, conforme a exigência:
 1. Backend: Criei a pasta manifestos-sock-shop/backend e salvei nela todos os
 YAMLs dos serviços, exceto o do frontend.
 2. Frontend: Criei a pasta manifestos-sock-shop/frontend e salvei nela apenas os
 manifestos de Service e Deployment do frontend.
-# 4.2. Instalação e Configuração do Argo CD
 
-# 1. Instalar o Argo CD no cluster
+# 4.2. Instalação e Configuração do Argo CD
 kubectl create namespace argocd
 
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# 2. Expor a interface e obter a senha para acesso
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 
 # 2. Expor a interface e obter a senha para acesso
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalanc
@@ -198,7 +175,7 @@ ________________________________________________________________________________
 ![Argo CD UI](./.github/assets/argocd.png)
 
 
-**Argo CD gerenciando o deploy da aplicação Sock Shop:**
+**Alertmanager Email:**
 ![Alertmanager Email](./.github/assets/alertmanager.png)
 
 
@@ -208,7 +185,7 @@ ________________________________________________________________________________
 
 ## Autor
 
-**`<Kleber Souza>`**
+**`Kleber Souza`**
 
 * LinkedIn: `https://linkedin.com/in/souzaklebersc`
 * GitHub: `https://github.com/kleberadesouza`
