@@ -1,55 +1,55 @@
-# região daAWS onde os recursos serão provisionados
+# região da AWS onde os recursos serão provisionados
 variable "region" {
   type        = string
   description = "Região AWS onde os recursos serão provisionados"
-  default     = "us-west-1"
+  default     = "us-east-1"
 }
 
-# Nome do cluster ekss
+# Nome do cluster EKS
 variable "cluster_name" {
   type        = string
   description = "Nome do cluster EKS"
-  default     = "aquarela-cluster-kleber"
+  default     = "meu-cluster-eks-demo"
 }
 
 # Versao do k8s para o cluster EKS
 variable "k8s_version" {
   type        = string
   description = "Versão do Kubernetes para o cluster EKS"
-  default     = "1.33"
+  default     = "1.28"
 }
 
 # arn do usuário IAM que será admin do cluster EKS
 variable "admin_user_arn" {
   type        = string
   description = "ARN do usuário IAM que terá permissão de admin no cluster EKS"
-  default     = "arn:aws:iam::833565098889:user/desafio_aquarela"
+  default     = "arn:aws:iam::123456789012:user/eks-admin-user"
 }
 
-#blocos da vpc
+# CIDR da VPC
 variable "vpc_cidr" {
   type        = string
   description = "CIDR da VPC"
-  default     = "10.0.0.0/16"
+  default     = "10.1.0.0/16"
 }
 
 # AZ disponibilidades
 variable "availability_zones" {
   type        = list(string)
   description = "Lista de zonas de disponibilidade"
-  default     = ["us-west-1a", "us-west-1b"]
+  default     = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
-#sub prv
+# subnets privadas
 variable "private_subnets" {
   type        = list(string)
   description = "Lista de subnets privadas"
-  default     = ["10.0.1.0/24", "10.0.2.0/24"]
+  default     = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
 }
 
-#sub pub
+# subnets públicas
 variable "public_subnets" {
   type        = list(string)
   description = "Lista de subnets públicas"
-  default     = ["10.0.101.0/24", "10.0.102.0/24"]
+  default     = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24"]
 }

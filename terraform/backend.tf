@@ -1,16 +1,16 @@
 terraform {
   backend "s3" {
     # nome do bucket
-    bucket         = "aquarela-desafio-kleber"
+    bucket         = "meu-bucket-terraform-state"
     
-    #  do arquivo de estado dentro do bucket
-    key            = "eks-kleber/terraform.tfstate"
+    # caminho do arquivo de estado dentro do bucket
+    key            = "eks-projeto/terraform.tfstate"
     
     # Região do bucket
-    region         = "us-west-1"
+    region         = "us-east-1"
     
-    #  nome da tabela DynamoDB
-    dynamodb_table = "terraform-lock-aquarela-kleber"
+    # nome da tabela DynamoDB
+    dynamodb_table = "terraform-locks"
     
     # Ativa a criptografia do arquivo de estado
     encrypt        = true
