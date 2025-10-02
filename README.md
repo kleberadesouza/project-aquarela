@@ -15,7 +15,6 @@
 
 <p align="center">
   <img alt="AWS" src="https://img.shields.io/badge/AWS-FF9900?logo=amazonaws&logoColor=white">
-  <img alt="Status" src="https://github.com/kleberadesouza/project-aquarela/actions/workflows/terraform.yaml/badge.svg">
   <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-1.30-blue?logo=kubernetes&logoColor=white">
   <img alt="Terraform" src="https://img.shields.io/badge/Terraform-1.5.6-blueviolet?logo=terraform&logoColor=white">
   <img alt="Git" src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white">
