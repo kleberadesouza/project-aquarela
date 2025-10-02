@@ -11,24 +11,6 @@
   <a href="#autor">Autor</a>
 </p>
 
-<p align="center">
-  <img alt="AWS" src="https://img.shields.io/badge/AWS-FF9900?logo=amazonaws&logoColor=white">
-  <img alt="Status" src="https://github.com/<exemplo-seu>/project-aquarela/actions/workflows/terraform.yaml/badge.svg">
-  <img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-1.30-blue?logo=kubernetes&logoColor=white">
-  <img alt="Terraform" src="https://img.shields.io/badge/Terraform-1.5.6-blueviolet?logo=terraform&logoColor=white">
-  <img alt="Git" src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white">
-  <br>
-  <img alt="Prometheus" src="https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white">
-  <img alt="Grafana" src="https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white">
-  <img alt="Argo CD" src="https://img.shields.io/badge/Argo%20CD-EF74AD?logo=argo&logoColor=white">
-  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white">
-</p>
-
-## Sobre o Projeto
-
-Este repositório contém a solução para um desafio técnico DevOps, cujo objetivo foi provisionar um cluster EKS na AWS de forma automatizada, implementar uma stack de monitoramento e configurar o deploy contínuo de uma aplicação de microsserviços (Sock Shop) utilizando Argo CD, seguindo as melhores práticas de IaC e GitOps.
-
-
 ## Stack de Tecnologias
 
 <p align="center">
@@ -43,18 +25,20 @@ Este repositório contém a solução para um desafio técnico DevOps, cujo obje
   <img alt="Argo CD" src="https://img.shields.io/badge/Argo%20CD-EF74AD?logo=argo&logoColor=white">
   <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white">
 </p>
-## Como Executar
+
 
 Aqui estão as etapas para reproduzir este ambiente.
 
 ### Etapa 1: Provisionamento da Infraestrutura via Terraform e CI/CD
 Nesta fase, preparei o backend na AWS e usei o Terraform, automatizado por uma pipeline no GitHub Actions, para criar toda a infraestrutura.
+
 # 2.1. Preparação do Backend na AWS
 Primeiro, criei os recursos na AWS para armazenar o estado do Terraform de forma
 remota e segura.
 
 # Criar o bucket S3 para o arquivo de estado
 aws s3api create-bucket --bucket seu-bucket-de-exemplo --region us-west-1
+
 # Criar a tabela DynamoDB para o lock de estado
 aws dynamodb create-table \
     --table-name sua-tabela-lock-de-exemplo \
@@ -82,7 +66,6 @@ aws eks --region us-west-1 update-kubeconfig --name seu-cluster-de-exemplo
 kubectl get nodes
 
 ### Etapa 2: Implementação da Stack de Monitoramento
-
 Com o cluster no ar, implementei a stack Kube-Prometheus-Stack usando Helm para ter
 observabilidade.
 
@@ -133,7 +116,6 @@ kubectl get svc -n monitoramento prometheus-stack-grafana
 kubectl get secret -n monitoramento prometheus-stack-grafana -o jsonpath="{
 
 ### Etapa 3: Implementação de GitOps com Argo CD
-
 A etapa final foi automatizar o deploy da aplicação Sock Shop, substituindo o processo
 manual por um fluxo de GitOps gerenciado pelo Argo CD.
 
@@ -157,8 +139,8 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalanc
 
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.dat
-# 4.3. Criação das Aplicações no Argo CD
 
+# 4.3. Criação das Aplicações no Argo CD
 Após acessar a interface, criei duas “Aplicações” no Argo CD, uma para cada parte da
 Sock Shop, apontando para as respectivas pastas no meu repositório GitHub. Isso foi
 feito aplicando dois manifestos ( app-frontend.yaml e app-backend.yaml ).
