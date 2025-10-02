@@ -1,0 +1,30 @@
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    replicas: 1
+    extraSecretMounts:
+    - name: smtp-password
+      mountPath: /etc/alertmanager/smtp-password
+      secretName: alertmanager-smtp-password
+      readOnly: true
+
+  config:
+    global:
+      smtp_smarthost: 'smtp.sendgrid.net:587'
+      smtp_from: 'kleberadesouza@gmail.com'
+      smtp_auth_username: 'apikey'
+      smtp_auth_password_file: '/etc/alertmanager/smtp-password/password'
+      smtp_require_tls: true
+    route:
+      group_by: ['alertname']
+      group_wait: 1s
+      group_interval: 1s
+      repeat_interval: 1m
+      receiver: 'email-kleber'
+    receivers:
+    - name: 'email-kleber'
+      email_configs:
+      - to: 'kleberadesouza@gmail.com'
+        send_resolved: true
+        headers:
+          subject: '[ALERT] {{ .GroupLabels.alertname }}'

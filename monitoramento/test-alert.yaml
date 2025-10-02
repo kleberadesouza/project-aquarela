@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: test-alert-immediate
+  namespace: monitoramento
+  labels:
+    release: prometheus-stack
+spec:
+  groups:
+  - name: test-alerts
+    rules:
+    - alert: TestAlertInstant
+      expr: "vector(1)"
+      for: 0s
+      labels:
+        severity: critical
+      annotations:
+        description: "verificar a configuração do Alertmanager."
+        summary: "configuração do sistema de monitoramento"
