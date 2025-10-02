@@ -1,4 +1,4 @@
-# Documentação do Projeto Técnico DevOps Infraestrutura na AWS com EKS, GitOps e Observabilidade
+# Projeto Técnico DevOps Infraestrutura na AWS com EKS, GitOps e Observabilidade
 
 > Este projeto demonstra a criação de uma infraestrutura Kubernetes completa na AWS, com provisionamento automatizado, monitoramento e deployment contínuo via GitOps.
 
