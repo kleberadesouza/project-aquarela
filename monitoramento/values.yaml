@@ -11,7 +11,7 @@ alertmanager:
   config:
     global:
       smtp_smarthost: 'smtp.sendgrid.net:587'
-      smtp_from: 'kleberadesouza@gmail.com'
+      smtp_from: 'seusemail@exemplo.com'
       smtp_auth_username: 'apikey'
       smtp_auth_password_file: '/etc/alertmanager/smtp-password/password'
       smtp_require_tls: true
@@ -24,7 +24,7 @@ alertmanager:
     receivers:
     - name: 'email-kleber'
       email_configs:
-      - to: 'kleberadesouza@gmail.com'
+      - to: 'seusemail@exemplo.com'
         send_resolved: true
         headers:
           subject: '[ALERT] {{ .GroupLabels.alertname }}'
